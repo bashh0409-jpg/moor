@@ -89,7 +89,7 @@ const ROWS: GalleryRow[] = [
 ];
 
 const INTRO =
-  "Space is one calm place for everything you save, write and share, a searchable workspace that gets out of the way so you can think.";
+  "Moor Cloud is one calm place for everything you save, write and share, a searchable workspace that gets out of the way so you can think.";
 
 // Copy lives in data so you can swap it once the real product positioning is settled
 const ABOUT_SECTIONS: AboutSection[] = [
@@ -101,12 +101,12 @@ const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "02",
     label: "Solution",
-    body: "Space brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
+    body: "Moor Cloud brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
   },
   {
     index: "03",
     label: "Features",
-    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Space and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
+    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Moor Cloud and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
   },
   {
     index: "04",
@@ -116,17 +116,17 @@ const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "05",
     label: "Platforms",
-    body: "Space is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
+    body: "Moor Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
   },
   {
     index: "06",
     label: "Services",
-    body: "Ovyon Labs designs and builds Space end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
+    body: "Moor Labs designs and builds Moor Cloud end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
   },
   {
     index: "07",
     label: "Roadmap",
-    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Space can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
+    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Moor Cloud can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
   },
 ];
 
@@ -365,7 +365,7 @@ const Page = () => {
               href="#work"
               className="rounded-full bg-[#00e] px-4 py-2 font-mono text-xs text-white"
             >
-              [ Work ]
+              [ Connect ]
             </a>
 
             <button
@@ -433,7 +433,7 @@ const Page = () => {
           </ul>
 
           <div className="flex flex-col gap-1 px-4 pb-4 pt-3 font-mono text-[10px] text-white">
-            <span>Ovyon Labs® — 2026</span>
+            <span>Moor Cloud® — 2026</span>
             <span>ALL RIGHTS RESERVED.</span>
           </div>
         </div>
@@ -517,7 +517,7 @@ const Page = () => {
               aria-hidden={aboutOpen}
               className="overflow-hidden"
             >
-              <p className="mb-2 text-xs leading-3 tracking-tight text-white">
+              <p className="mb-2  text-xs leading-3 tracking-tight text-white">
                 {INTRO}
               </p>
             </div>
