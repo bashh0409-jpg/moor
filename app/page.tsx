@@ -346,6 +346,75 @@ const Page = () => {
     };
   }, []);
 
+  // One restrained entrance and lightweight hover feedback make the page feel intentional
+  // without adding scroll-triggered work to every gallery tile.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const ctx = gsap.context(() => {
+      const tracks = gsap.utils.toArray<HTMLElement>(".gallery-track");
+      const figures = gsap.utils.toArray<HTMLElement>("figure");
+
+      if (!reduceMotion) {
+        gsap.fromTo(
+          tracks,
+          { autoAlpha: 0 },
+          {
+            autoAlpha: 1,
+            duration: 0.8,
+            stagger: 0.07,
+            ease: "power3.out",
+            clearProps: "opacity,visibility",
+            delay: 0.08,
+          },
+        );
+      }
+
+      figures.forEach((figure) => {
+        const image = figure.querySelector<HTMLElement>("div");
+        if (!image || reduceMotion) return;
+
+        const enter = () =>
+          gsap.to(image, {
+            scale: 1.045,
+            duration: 0.65,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        const leave = () =>
+          gsap.to(image, {
+            scale: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            overwrite: "auto",
+          });
+
+        figure.addEventListener("pointerenter", enter);
+        figure.addEventListener("pointerleave", leave);
+        // Store cleanup directly on the node so listeners never accumulate.
+        (
+          figure as HTMLElement & { __galleryCleanup?: () => void }
+        ).__galleryCleanup = () => {
+          figure.removeEventListener("pointerenter", enter);
+          figure.removeEventListener("pointerleave", leave);
+        };
+      });
+    }, root);
+
+    return () => {
+      root.querySelectorAll<HTMLElement>("figure").forEach((figure) => {
+        (
+          figure as HTMLElement & { __galleryCleanup?: () => void }
+        ).__galleryCleanup?.();
+      });
+      ctx.revert();
+    };
+  }, []);
+
   return (
     <main className="bg-neutral-950">
       <nav
@@ -467,11 +536,11 @@ const Page = () => {
                       <figure
                         key={`${item.id}-${dup}`}
                         // mr-1 (not flex gap) so one set's width is exactly n * (tile + 4px)
-                        className="relative mr-1 aspect-4/5 w-[60vw] shrink-0 overflow-hidden bg-neutral-900 sm:w-[38vw] lg:w-[24vw]"
+                        className="relative mr-1 aspect-4/5 w-[60vw] shrink-0 overflow-hidden bg-neutral-900 [contain:paint] sm:w-[38vw] lg:w-[24vw]"
                       >
                         <div
                           aria-hidden="true"
-                          className="absolute inset-0 bg-linear-to-br from-[#00e]/50 via-neutral-900 to-black bg-cover bg-center"
+                          className="absolute inset-0 bg-linear-to-br from-[#00e]/50 via-neutral-900 to-black bg-cover bg-center will-change-transform"
                           style={{
                             backgroundImage: `url(${item.src})`,
                           }}
