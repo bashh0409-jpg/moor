@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import HoverLabel from "@/components/hover-label";
 
 type ConsentChoice = "all" | "essential";
 type ConsentSnapshot = ConsentChoice | "unavailable" | null;
@@ -71,7 +72,7 @@ export default function CookieConsent() {
             onClick={() => saveChoice("all")}
             className="h-auto w-auto cursor-pointer appearance-none rounded-md border-0 bg-[#eee] p-2.5  text-xs font-medium tracking-tight leading-none text-[#444] transition-colors hover:bg-white"
           >
-            OK
+            <HoverLabel>OK</HoverLabel>
           </button>
         </div>
       </div>

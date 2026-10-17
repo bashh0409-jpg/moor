@@ -3,15 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import gsap from "gsap";
+import Lenis from "lenis";
 import Image from "next/image";
+import AboutPanel from "@/components/about-panel";
+import SiteNavbar from "@/components/site-navbar";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { useScrollSound } from "@/hooks/use-scroll-sound";
 import type { ScrollSoundPreset } from "@/hooks/use-scroll-sound";
-
-interface MenuItem {
-  label: string;
-  href: string;
-}
 
 interface GalleryItem {
   id: string;
@@ -78,13 +76,6 @@ const SCROLL_SOUND_PRESET: ScrollSoundPreset = "click";
 const SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
-const MENU_ITEMS: MenuItem[] = [
-  { label: "Instagram", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "Twitter", href: "#" },
-  { label: "Speedrun", href: "#" },
-];
-
 const makeRow = (
   rowNumber: number,
   direction: GalleryRow["direction"],
@@ -108,9 +99,6 @@ const ROWS: GalleryRow[] = [
   makeRow(4, "right", 0.9, 7),
   makeRow(5, "left", 0.55, 8),
 ];
-
-const INTRO =
-  "Moor Cloud is one calm place for everything you save, write and share, a searchable workspace that gets out of the way so you can think.";
 
 interface CollapsiblePanel {
   rootRef: RefObject<HTMLElement | null>;
@@ -324,6 +312,11 @@ const Page = () => {
     }));
 
     let cycle = 0; // height of one copy of the page
+    const lenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.1,
+      anchors: true,
+    });
     const measure = (): void => {
       cycle = content.getBoundingClientRect().height / COPIES;
       tracks.forEach((track) => {
@@ -335,8 +328,8 @@ const Page = () => {
     const normalize = (y: number): number => cycle + mod(y - cycle, cycle);
 
     measure();
-    let lastY = normalize(window.scrollY);
-    window.scrollTo({ top: lastY, left: 0, behavior: "instant" });
+    let lastY = normalize(lenis.scroll);
+    lenis.scrollTo(lastY, { immediate: true, force: true });
 
     // `target` counts every pixel the user has scrolled, never reset, so row motion survives the wrap
     let target = 0;
@@ -345,17 +338,16 @@ const Page = () => {
     let scrollBoost = 0;
 
     const onScroll = (): void => {
-      const y = window.scrollY;
+      const y = lenis.scroll;
       const scrollDelta = y - lastY;
       target += scrollDelta;
       scrollBoost = Math.min(scrollBoost + Math.abs(scrollDelta) * 0.025, 12);
       lastY = y;
 
-      // The copies are identical, so reposition instantly. `instant` prevents global
-      // scroll-behavior: smooth from animating the wrap and creating a visible bounce.
+      // Reposition instantly at copy boundaries so the loop stays seamless.
       if (y >= cycle * 2 || y < cycle) {
         const wrapped = normalize(y);
-        window.scrollTo({ top: wrapped, left: 0, behavior: "instant" });
+        lenis.scrollTo(wrapped, { immediate: true, force: true });
         lastY = wrapped;
       }
     };
@@ -387,9 +379,9 @@ const Page = () => {
       measure();
       if (previousCycle > 0 && cycle !== previousCycle) {
         const fraction =
-          mod(window.scrollY - previousCycle, previousCycle) / previousCycle;
+          mod(lenis.scroll - previousCycle, previousCycle) / previousCycle;
         const y = cycle + fraction * cycle;
-        window.scrollTo({ top: y, left: 0, behavior: "instant" });
+        lenis.scrollTo(y, { immediate: true, force: true });
         lastY = y;
       }
     });
@@ -402,6 +394,7 @@ const Page = () => {
       window.removeEventListener("scroll", onScroll);
       gsap.ticker.remove(tick);
       resizeObserver.disconnect();
+      lenis.destroy();
     };
   }, []);
 
@@ -505,104 +498,19 @@ const Page = () => {
 
   return (
     <main className="bg-neutral-950">
-      <nav
-        ref={navRef}
-        className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-3xl bg-black/30 text-white shadow-lg backdrop-blur-md"
-      >
-        {/* Navbar header */}
-        <div className="flex items-center justify-between gap-3 px-2 py-2">
-          <img
-            src="/komma.avif"
-            alt="Komma"
-            className="h-auto w-30 object-contain"
-          />
-
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setSoundOn((prev) => !prev)}
-              aria-pressed={soundOn}
-              className={`rounded-full cursor-pointer px-4 py-2 font-mono text-xs text-white transition-colors ${
-                soundOn ? "bg-[#00e]" : "bg-black/50 hover:bg-[#00e]"
-              }`}
-            >
-              [ Sound: {soundOn ? "On" : "Off"} ]
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                const nextOpen = !menuOpen;
-                setMenuOpen(nextOpen);
-                if (nextOpen) setAboutOpen(false);
-              }}
-              aria-expanded={menuOpen}
-              aria-controls="nav-menu"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              className="cursor-pointer rounded-full bg-black/50 p-2 px-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 -960 960 960"
-                fill="currentColor"
-                className={`h-4 w-4 transition-transform duration-200 ${
-                  menuOpen ? "rotate-45" : "hover:rotate-90"
-                }`}
-              >
-                <path d="M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Animated menu panel; h-0 avoids a flash of open content before GSAP runs */}
-        <div
-          ref={menuPanelRef}
-          id="nav-menu"
-          aria-hidden={!menuOpen}
-          className="h-0 overflow-hidden"
-        >
-          <div className="flex items-center gap-2 px-4 pt-4">
-            <a
-              href="#work"
-              tabIndex={menuOpen ? 0 : -1}
-              onClick={() => setMenuOpen(false)}
-              className="menu-item rounded-full bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
-            >
-              [ Work ]
-            </a>
-
-            <a
-              href="#contact"
-              tabIndex={menuOpen ? 0 : -1}
-              onClick={() => setMenuOpen(false)}
-              className="menu-item rounded-full bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
-            >
-              [ Contact ]
-            </a>
-          </div>
-
-          <ul className="flex flex-wrap items-center gap-x-1 px-3 pt-2">
-            {MENU_ITEMS.map((item) => (
-              <li key={item.label} className="menu-item">
-                <a
-                  href={item.href}
-                  tabIndex={menuOpen ? 0 : -1}
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-full px-2 py-2 font-mono text-xs text-white/60 transition-colors hover:text-white"
-                >
-                  [ {item.label} ]
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex flex-col uppercase gap-1 px-4 pb-4 pt-3 font-mono text-[10px] text-white">
-            <span>Moor Cloud™ — 2026</span>
-            <span>ALL RIGHTS RESERVED.</span>
-          </div>
-        </div>
-      </nav>
+      <SiteNavbar
+        navRef={navRef}
+        menuPanelRef={menuPanelRef}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        onOpenMenu={() => {
+          const nextOpen = !menuOpen;
+          setMenuOpen(nextOpen);
+          if (nextOpen) setAboutOpen(false);
+        }}
+        soundOn={soundOn}
+        setSoundOn={setSoundOn}
+      />
 
       {/* Logo pinned to the middle of the screen; pointer-events-none so it never blocks scrolling or taps */}
       <div className="pointer-events-none w-full h-full bg-black/40  fixed inset-0 z-40 flex items-center justify-center">
@@ -673,99 +581,19 @@ const Page = () => {
         ))}
       </div>
 
-      {/* Bottom nav: pinned to bottom-4, so opening grows it upward */}
-      <aside
-        ref={aboutRef}
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-[#0006] text-white shadow-lg backdrop-blur-lg"
-      >
-        <div className="flex w-full items-center justify-between rounded-full p-4 py-4 px-6 font-mono">
-          <img
-            src="/komma.avif"
-            alt=""
-            className="h-auto w-25 object-contain"
-          />
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                const nextOpen = !aboutOpen;
-                setAboutOpen(nextOpen);
-                if (nextOpen) setMenuOpen(false);
-              }}
-              aria-expanded={aboutOpen}
-              aria-controls="about-panel"
-              className="cursor-pointer rounded-full min-w-40 bg-black/50 hover:bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors"
-            >
-              [ {aboutOpen ? "Close" : "More Info"} ]
-            </button>
-          </div>
-        </div>
-
-        {/* Dark container */}
-        <div className="flex max-h-[60dvh] flex-col rounded-[2rem] pt-1 overflow-hidden backdrop-blur-lg bg-[#0000004d] sm:rounded-[2rem]">
-          {/* Scrollable content */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-1 sm:px-6">
-            {/* Intro */}
-            <div
-              ref={introRef}
-              aria-hidden={aboutOpen}
-              className="overflow-hidden"
-            >
-              <p className="mb-2 hidden text-sm font-medium leading-5 tracking-tight text-white md:inline-flex">
-                {INTRO}
-              </p>
-            </div>
-
-            {/* About panel */}
-            <div
-              ref={aboutPanelRef}
-              id="about-panel"
-              aria-hidden={!aboutOpen}
-              className="h-0 overflow-hidden"
-            >
-              <div className="mb-3 flex flex-col gap-5 py-3">
-                {ABOUT_SECTIONS.map((section) => (
-                  <div
-                    key={section.index}
-                    className="about-item grid grid-cols-1 gap-2 text-[10px] tracking-tight md:grid-cols-4 md:gap-4"
-                  >
-                    <p className="font-mono font-medium uppercase leading-4 text-white/70">
-                      {section.index} [ {section.label} ]
-                    </p>
-
-                    <p className="text-xs font-medium leading-5 tracking-tight text-white md:col-span-3">
-                      {section.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Fixed action bar */}
-          <div className="flex w-full shrink-0 items-center px-3 pb-3 pt-2 sm:px-6 sm:pb-4">
-            <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={handleReadAloud}
-                aria-pressed={reading}
-                className={`flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full px-3 py-3 font-mono text-[11px] leading-none text-white transition-colors duration-200 sm:px-5 sm:text-xs ${
-                  reading ? "bg-[#00e]" : "bg-white/10 hover:bg-white/20"
-                }`}
-              >
-                {reading ? "Stop Reading" : "Read Aloud"}
-              </button>
-
-              <a
-                href="mailto:info@thewisestudio.xyz"
-                className="flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-[#00e] px-3 py-3 font-mono text-[11px] leading-none text-white transition-colors duration-200 hover:bg-[#2222ff] sm:px-5 sm:text-xs"
-              >
-                [ Question? ]
-              </a>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AboutPanel
+        aboutRef={aboutRef}
+        aboutPanelRef={aboutPanelRef}
+        introRef={introRef}
+        aboutOpen={aboutOpen}
+        reading={reading}
+        onToggleAbout={() => {
+          const nextOpen = !aboutOpen;
+          setAboutOpen(nextOpen);
+          if (nextOpen) setMenuOpen(false);
+        }}
+        onReadAloud={handleReadAloud}
+      />
     </main>
   );
 };
