@@ -227,9 +227,6 @@ const Page = () => {
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
   const introRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
-  const progressLabelRef = useRef<HTMLSpanElement>(null);
-  const progressFillRef = useRef<HTMLSpanElement>(null);
 
   const { rootRef: navRef, panelRef: menuPanelRef } = useCollapsiblePanel(
     menuOpen,
@@ -275,7 +272,7 @@ const Page = () => {
 
     measure();
     let lastY = normalize(window.scrollY);
-    window.scrollTo(0, lastY);
+    window.scrollTo({ top: lastY, left: 0, behavior: "instant" });
 
     // `target` counts every pixel the user has scrolled, never reset, so row motion survives the wrap
     let target = 0;
@@ -287,10 +284,11 @@ const Page = () => {
       target += y - lastY;
       lastY = y;
 
-      // Every copy looks identical, so jumping by exactly one cycle is invisible
+      // The copies are identical, so reposition instantly. `instant` prevents global
+      // scroll-behavior: smooth from animating the wrap and creating a visible bounce.
       if (y >= cycle * 2 || y < cycle) {
         const wrapped = normalize(y);
-        window.scrollTo(0, wrapped);
+        window.scrollTo({ top: wrapped, left: 0, behavior: "instant" });
         lastY = wrapped;
       }
     };
@@ -309,17 +307,6 @@ const Page = () => {
         });
       }
 
-      const fraction = mod(current, cycle) / cycle;
-      if (progressLabelRef.current) {
-        progressLabelRef.current.textContent = `${Math.round(fraction * 100)}%`;
-      }
-      if (progressFillRef.current) {
-        progressFillRef.current.style.transform = `scaleX(${fraction})`;
-      }
-      progressRef.current?.setAttribute(
-        "aria-valuenow",
-        String(Math.round(fraction * 100)),
-      );
     };
 
     // Only width changes alter the cycle (tiles are sized in vw), so mobile toolbar resizes don't fire this
@@ -330,7 +317,7 @@ const Page = () => {
         const fraction =
           mod(window.scrollY - previousCycle, previousCycle) / previousCycle;
         const y = cycle + fraction * cycle;
-        window.scrollTo(0, y);
+        window.scrollTo({ top: y, left: 0, behavior: "instant" });
         lastY = y;
       }
     });
@@ -430,12 +417,12 @@ const Page = () => {
           />
 
           <div className="flex shrink-0 items-center gap-2">
-            <a
-              href="#work"
+            <button
+              type="button"
               className="rounded-full bg-[#00e] px-4 py-2 font-mono text-xs text-white"
             >
               [ Connect ]
-            </a>
+            </button>
 
             <button
               type="button"
@@ -561,32 +548,24 @@ const Page = () => {
       {/* Bottom nav: pinned to bottom-4, so opening grows it upward */}
       <aside
         ref={aboutRef}
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-3xl bg-black/30 text-white shadow-lg backdrop-blur-md"
+        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-black/30 text-white shadow-lg backdrop-blur-md"
       >
-        <div className="flex w-full items-center justify-between rounded-full p-2 px-4 font-mono">
+        <div className="flex w-full items-center justify-between rounded-full p-4 py-6 px-6 font-mono">
           <img src="komma.avif" alt="" className="h-auto w-25 object-contain" />
-          <button
-            type="button"
-            onClick={() => setAboutOpen((prev) => !prev)}
-            aria-expanded={aboutOpen}
-            aria-controls="about-panel"
-            className="cursor-pointer rounded-full bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
-          >
-            [ About ]
-          </button>
+
         </div>
 
         {/* Dark container: capped height, flex column so the button row never scrolls away */}
-        <div className="flex max-h-[60vh] flex-col overflow-hidden rounded-2xl bg-black/50">
+        <div className="flex max-h-[60vh] flex-col overflow-hidden rounded-[2rem] py-4 bg-black/50">
           {/* Only this region scrolls */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-2 [scrollbar-width:thin]">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pt-2 [scrollbar-width:thin]">
             {/* Intro: visible while collapsed, animates away when About opens */}
             <div
               ref={introRef}
               aria-hidden={aboutOpen}
               className="overflow-hidden"
             >
-              <p className="mb-2  text-xs leading-3 tracking-tight text-white">
+              <p className="mb-2  text-sm leading-3  tracking-tight text-white">
                 {INTRO}
               </p>
             </div>
@@ -616,31 +595,19 @@ const Page = () => {
           </div>
 
           {/* Always visible: sits outside the scroll region and the collapsing panel */}
-          <div className="flex w-full shrink-0 items-center justify-between gap-2 px-4 pb-2 pt-2">
-            <div
-              ref={progressRef}
-              role="progressbar"
-              aria-label="Position in loop"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={0}
-              className="relative overflow-hidden rounded-full bg-white/10 px-3 py-2 font-mono text-xs text-white/80"
-            >
-              <span
-                ref={progressFillRef}
-                aria-hidden="true"
-                className="absolute inset-0 origin-left scale-x-0 bg-white/15"
-              />
-              <span ref={progressLabelRef} className="relative">
-                0%
-              </span>
+          <div className=" w-full shrink-0 items-center justify-between gap-2 px-6 pb-2 pt-2">
+            <div className="flex shrink-0 items-center gap-2">
+              
+              <button
+                type="button"
+                onClick={() => setAboutOpen((prev) => !prev)}
+                aria-expanded={aboutOpen}
+                aria-controls="about-panel"
+                className="cursor-pointer rounded-full  bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+              >
+                [ {aboutOpen ? "Close" : "More Info"} ]
+              </button>
             </div>
-            <a
-              href="#work"
-              className="rounded-full bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]/80"
-            >
-              [ Explore More ]
-            </a>
           </div>
         </div>
       </aside>
