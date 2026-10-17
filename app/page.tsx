@@ -550,7 +550,7 @@ const Page = () => {
         ref={aboutRef}
         className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-black/30 text-white shadow-lg backdrop-blur-md"
       >
-        <div className="flex w-full items-center justify-between rounded-full p-4 py-6 px-6 font-mono">
+        <div className="flex w-full items-center justify-between rounded-full p-4 py-4 px-6 font-mono">
           <img src="komma.avif" alt="" className="h-auto w-25 object-contain" />
           <div className="flex shrink-0 items-center gap-2">
             <button
@@ -575,7 +575,7 @@ const Page = () => {
               aria-hidden={aboutOpen}
               className="overflow-hidden"
             >
-              <p className="mb-2  text-sm leading-3  tracking-tight text-white">
+              <p className="mb-2  text-sm font-medium leading-4  tracking-tight text-white">
                 {INTRO}
               </p>
             </div>
@@ -590,12 +590,12 @@ const Page = () => {
                 {ABOUT_SECTIONS.map((section) => (
                   <div
                     key={section.index}
-                    className="about-item grid grid-cols-1 gap-2 text-xs tracking-tight md:grid-cols-4 md:gap-4"
+                    className="about-item grid grid-cols-1 gap-2 text-[10px] tracking-tight md:grid-cols-4 md:gap-4"
                   >
-                    <p className="font-mono uppercase">
-                      {section.index} [ {section.label} ]
+                    <p className="font-mono font-medium uppercase">
+                      {section.index} { " "}[ { section.label} ]
                     </p>
-                    <p className="text-xs leading-4 tracking-tight text-white md:col-span-3">
+                    <p className="text-xs leading-4 font-medium tracking-tight text-white md:col-span-3">
                       {section.body}
                     </p>
                   </div>
