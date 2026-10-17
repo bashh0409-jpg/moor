@@ -1,8 +1,4 @@
-import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import HoverLabel from "@/components/hover-label";
 
 interface MenuItem {
@@ -43,9 +39,9 @@ export default function SiteNavbar({
     >
       <div className="flex items-center justify-between gap-3 px-2 py-2">
         <img
-          src="/komma.avif"
-          alt="Komma"
-          className="h-auto w-30 object-contain"
+          src="/splash.svg"
+          alt="splash"
+          className="h-auto pl-4 w-20 object-contain"
         />
 
         <div className="flex shrink-0 items-center gap-2">
@@ -124,7 +120,7 @@ export default function SiteNavbar({
         </ul>
 
         <div className="flex flex-co gap-1 px-4 pb-4 pt-3 font-mono text-[10px] uppercase text-white">
-          <span>Moor Cloud™ — 2026</span>
+          <span>Splash Cloud™ — 2026</span>
           <span>ALL RIGHTS RESERVED.</span>
         </div>
       </div>

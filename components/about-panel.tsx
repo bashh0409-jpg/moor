@@ -13,7 +13,7 @@ interface AboutPanelProps {
 }
 
 const INTRO =
-  "Moor Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most.";
+  "Splash Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most.";
 
 export default function AboutPanel({
   aboutRef,
@@ -30,11 +30,7 @@ export default function AboutPanel({
       className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-[#0006] text-white shadow-lg backdrop-blur-lg"
     >
       <div className="flex w-full items-center justify-between rounded-full px-6 py-4 font-mono">
-        <img
-          src="/komma.avif"
-          alt=""
-          className="h-auto w-25 object-contain"
-        />
+        <img src="/splash.svg" alt="" className="h-auto w-18 object-contain" />
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -98,9 +94,7 @@ export default function AboutPanel({
                 reading ? "bg-[#00e]" : "bg-white/10 hover:bg-white/20"
               }`}
             >
-              <HoverLabel>
-                {reading ? "Stop Reading" : "Read Aloud"}
-              </HoverLabel>
+              <HoverLabel>{reading ? "Stop Reading" : "Read Aloud"}</HoverLabel>
             </button>
 
             <a

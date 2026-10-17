@@ -6,8 +6,8 @@ import HoverLabel from "@/components/hover-label";
 type ConsentChoice = "all" | "essential";
 type ConsentSnapshot = ConsentChoice | "unavailable" | null;
 
-const CONSENT_KEY = "moor-cookie-consent";
-const CONSENT_CHANGE_EVENT = "moor-consent-change";
+const CONSENT_KEY = "splash-cookie-consent";
+const CONSENT_CHANGE_EVENT = "splash-consent-change";
 
 const subscribe = (onChange: () => void) => {
   window.addEventListener("storage", onChange);

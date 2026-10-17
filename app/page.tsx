@@ -370,7 +370,6 @@ const Page = () => {
           track.setX(track.goesLeft ? -shift : shift - track.setWidth);
         });
       }
-
     };
 
     // Only width changes alter the cycle (tiles are sized in vw), so mobile toolbar resizes don't fire this
@@ -516,9 +515,9 @@ const Page = () => {
       <div className="pointer-events-none w-full h-full bg-black/40  fixed inset-0 z-40 flex items-center justify-center">
         <div className="absolute h-40 w-64 rounded-full " />
         <img
-          src="/komma.avif"
-          alt="Komma"
-          className="relative mix-blend-difference h-auto w-50 object-contain drop-shadow-2xl"
+          src="/splash.svg"
+          alt="splash"
+          className="relative mix-blend-difference h-auto w-40 object-contain drop-shadow-2xl"
         />
       </div>
 

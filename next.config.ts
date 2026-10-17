@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
 
     return [
       { source: "/gallery/:path*", headers: cacheHeaders },
-      { source: "/komma.avif", headers: cacheHeaders },
+      { source: "/splash.svg", headers: cacheHeaders },
     ];
   },
   turbopack: {

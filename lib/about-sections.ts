@@ -14,12 +14,12 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "02",
     label: "Solution",
-    body: "Moor Cloud brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
+    body: "Splash Cloud brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
   },
   {
     index: "03",
     label: "Features",
-    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Moor Cloud and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
+    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Splash Cloud and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
   },
   {
     index: "04",
@@ -29,16 +29,16 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "05",
     label: "Platforms",
-    body: "Moor Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
+    body: "Splash Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
   },
   {
     index: "06",
     label: "Services",
-    body: "Moor Labs designs and builds Moor Cloud end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
+    body: "Splash Labs designs and builds Splash Cloud end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
   },
   {
     index: "07",
     label: "Roadmap",
-    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Moor Cloud can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
+    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Splash Cloud can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
   },
 ];
