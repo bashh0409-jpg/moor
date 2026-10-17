@@ -426,7 +426,11 @@ const Page = () => {
 
             <button
               type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
+              onClick={() => {
+                const nextOpen = !menuOpen;
+                setMenuOpen(nextOpen);
+                if (nextOpen) setAboutOpen(false);
+              }}
               aria-expanded={menuOpen}
               aria-controls="nav-menu"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -555,7 +559,11 @@ const Page = () => {
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
-              onClick={() => setAboutOpen((prev) => !prev)}
+              onClick={() => {
+                const nextOpen = !aboutOpen;
+                setAboutOpen(nextOpen);
+                if (nextOpen) setMenuOpen(false);
+              }}
               aria-expanded={aboutOpen}
               aria-controls="about-panel"
               className="cursor-pointer rounded-full min-w-40  bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
