@@ -14,8 +14,15 @@ const nextConfig: NextConfig = {
         value: "public, max-age=86400, stale-while-revalidate=604800",
       },
     ];
+    const securityHeaders = [
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=31536000",
+      },
+    ];
 
     return [
+      { source: "/:path*", headers: securityHeaders },
       { source: "/gallery/:path*", headers: cacheHeaders },
       { source: "/splash.svg", headers: cacheHeaders },
     ];
