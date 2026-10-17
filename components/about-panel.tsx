@@ -13,7 +13,7 @@ interface AboutPanelProps {
 }
 
 const INTRO =
-  "Moor Cloud is one calm place for everything you save, write and share, a searchable workspace that gets out of the way so you can think.";
+  "Moor Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most.";
 
 export default function AboutPanel({
   aboutRef,
@@ -58,7 +58,7 @@ export default function AboutPanel({
             aria-hidden={aboutOpen}
             className="overflow-hidden"
           >
-            <p className="mb-2 hidden text-sm font-medium leading-5 tracking-tight text-white md:inline-flex">
+            <p className="mb-2 hidden text-xs  leading-4 tracking-tight text-white md:inline-flex">
               {INTRO}
             </p>
           </div>
