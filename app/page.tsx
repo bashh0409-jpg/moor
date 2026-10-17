@@ -484,7 +484,7 @@ const Page = () => {
                   href={item.href}
                   tabIndex={menuOpen ? 0 : -1}
                   onClick={() => setMenuOpen(false)}
-                  className="block rounded-full px-2 py-2 font-mono text-xs text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                  className="block rounded-full px-2 py-2 font-mono text-xs text-white/60 transition-colors hover:text-white"
                 >
                   [ {item.label} ]
                 </a>
@@ -492,8 +492,8 @@ const Page = () => {
             ))}
           </ul>
 
-          <div className="flex flex-col gap-1 px-4 pb-4 pt-3 font-mono text-[10px] text-white">
-            <span>Moor Cloud® — 2026</span>
+          <div className="flex flex-col uppercase gap-1 px-4 pb-4 pt-3 font-mono text-[10px] text-white">
+            <span>Moor Cloud™ — 2026</span>
             <span>ALL RIGHTS RESERVED.</span>
           </div>
         </div>
@@ -566,7 +566,7 @@ const Page = () => {
               }}
               aria-expanded={aboutOpen}
               aria-controls="about-panel"
-              className="cursor-pointer rounded-full min-w-40  bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+              className="cursor-pointer rounded-full min-w-40 bg-black/50 hover:bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors"
             >
               [ {aboutOpen ? "Close" : "More Info"} ]
             </button>
@@ -583,7 +583,7 @@ const Page = () => {
               aria-hidden={aboutOpen}
               className="overflow-hidden"
             >
-              <p className="mb-2  text-sm font-medium leading-4  tracking-tight text-white">
+              <p className="mb-2  text-sm hidden md:inline-flex font-medium leading-4  tracking-tight text-white">
                 {INTRO}
               </p>
             </div>
@@ -601,7 +601,7 @@ const Page = () => {
                     className="about-item grid grid-cols-1 gap-2 text-[10px] tracking-tight md:grid-cols-4 md:gap-4"
                   >
                     <p className="font-mono font-medium uppercase">
-                      {section.index} { " "}[ { section.label} ]
+                      {section.index} [ {section.label} ]
                     </p>
                     <p className="text-xs leading-4 font-medium tracking-tight text-white md:col-span-3">
                       {section.body}
@@ -614,7 +614,16 @@ const Page = () => {
 
           {/* Always visible: sits outside the scroll region and the collapsing panel */}
           <div className=" w-full shrink-0 items-center justify-between gap-2 px-6 pb-2 pt-2">
-            <div className="flex shrink-0 w-full justify-end items-center gap-2">
+            
+            <div className="flex shrink-0 w-full justify-between items-center gap-2">
+              
+              <a
+                href="mailto:info@thewisestudio.xyz"
+                aria-controls="about-panel"
+                className="cursor-pointer rounded-full  items-center flex justify-center bg-white/10 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+              >
+                [ Sponsor ]
+              </a>
               <a
                 href="mailto:info@thewisestudio.xyz"
                 aria-controls="about-panel"
