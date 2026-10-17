@@ -94,7 +94,7 @@ export default function AboutPanel({
                 reading ? "bg-[#00e]" : "bg-white/10 hover:bg-white/20"
               }`}
             >
-              <HoverLabel>{reading ? "Stop Reading" : "Read Aloud"}</HoverLabel>
+              <HoverLabel>[ {reading ? "Stop Reading" : "Read Aloud"} ]</HoverLabel>
             </button>
 
             <a

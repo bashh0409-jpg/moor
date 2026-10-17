@@ -5,40 +5,41 @@ export interface AboutSection {
 }
 
 // Shared by the page and /api/tts so the spoken text always matches the UI.
+// Platform and feature claims below mirror the v1 scope (Mac first); update them as milestones ship.
 export const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "01",
     label: "Problem",
-    body: "Our digital lives are built around files, yet managing them across devices, folders and storage services can quickly become complicated. As our libraries grow, finding space for large files and keeping everything accessible becomes increasingly difficult. Local storage has its limits, while traditional cloud storage can feel like little more than another place to put things. We believe managing digital files should feel simpler, more flexible and less dependent on the limitations of a single device.",
+    body: "Our digital lives are built around files, yet storage is still tied to the device in front of us. Libraries of photos, video and projects keep growing, internal disks fill up, and the usual fix is to download, upload and juggle copies between a computer and a cloud service. Traditional cloud storage often feels like a separate website rather than part of your computer. We believe your files should be as easy to open as the ones sitting on your own disk, wherever they actually live.",
   },
   {
     index: "02",
     label: "The Idea",
-    body: "Splash is an upcoming cloud storage platform built around a simple idea: your files should have a place of their own, accessible beyond the limits of your local device. Inspired by a new generation of storage solutions, Splash aims to make storing, accessing and managing digital files feel natural. We're exploring a more straightforward approach to cloud storage, bringing the essentials together in one focused experience without unnecessary complexity.",
+    body: "Splash is an upcoming cloud storage app that works like a drive you plug into your computer. Install it, mount your Splash drive, and it appears alongside your other drives in Finder. Your files live in the cloud, but you open, edit and save them just as you would with a USB stick. Splash fetches only the parts of a file you actually need, when you need them, so a large video can start playing without waiting for the whole thing to download.",
   },
   {
     index: "03",
-    label: "The Experience",
-    body: "We're building Splash with simplicity at its core. The goal is to create a clean, intuitive space where files can be stored, browsed and managed without friction. From everyday documents to larger digital assets, the experience is being designed to keep file management straightforward and organised. Rather than overwhelming users with unnecessary tools, Splash will focus on the essential interactions that make cloud storage useful, accessible and easy to understand.",
+    label: "Experience",
+    body: "The experience is designed to feel invisible. Drag files onto your drive to move them to the cloud and free up space on your device. Open a document, scrub through a video or browse a large folder without downloading everything first. Frequently used files are kept close by so they open quickly, and changes are sent back to the cloud as you save. There is no separate upload step to remember, and no extra app to learn beyond the drive itself.",
   },
   {
     index: "04",
     label: "The Vision",
-    body: "We imagine a future where your digital files are no longer tied so closely to the physical devices you own. Splash aims to make cloud storage feel like a natural extension of your everyday computing experience, giving your files a more flexible home as your digital world grows. Our vision is to create a dependable, accessible storage experience that puts your files first and makes managing them feel less like a technical task and more like second nature.",
+    body: "We imagine a future where the size of your files is no longer limited by the size of your disk. Splash aims to make cloud storage feel like a natural extension of your computer, giving your files a flexible home that grows with your digital world. Our vision is a dependable drive that works the same way on every device you own, putting your files first and making storage feel less like a technical task and more like second nature.",
   },
   {
     index: "05",
     label: "Principles",
-    body: "Splash is being shaped by a few simple principles. Simplicity means making storage easy to understand and use. Accessibility means rethinking how people reach their files beyond a single device. Reliability means treating the safekeeping of digital assets as a fundamental responsibility. Privacy means designing with appropriate protection and user control in mind. These principles guide our decisions as we work towards a product that feels considered, practical and built around the needs of the people who use it.",
+    body: "Splash is being shaped by a few simple principles. Simplicity means a drive that behaves like any other, with nothing new to learn. Accessibility means reaching your files from any of your devices without copying them around. Reliability means treating the safekeeping of your files as a fundamental responsibility, including when a connection drops mid-save. Privacy means designing with appropriate protection and user control in mind. These principles guide our decisions as we work towards a product that feels considered, practical and built around the people who use it.",
   },
   {
     index: "06",
-    label: "In Development",
-    body: "Splash is currently in preparation. We're working on the foundations of the product, exploring the right infrastructure and shaping an experience that brings our vision of cloud storage to life. This stage is about getting the fundamentals right before opening the platform to users. We're taking the time to build thoughtfully, prioritising the core storage experience and making deliberate decisions about what belongs in the product and what doesn't. There's still work ahead, and this is only the beginning.",
+    label: "Development",
+    body: "Splash is currently in preparation. We're working on the foundations: the system that presents cloud storage to your computer as a real drive, and the backend that stores and serves your files efficiently. We're starting with Mac, so we can get the core experience right on one platform before widening our reach. This stage is about getting the fundamentals right before opening the platform to users. We're prioritising reading, writing and reliability over extra features, and there's still work ahead.",
   },
   {
     index: "07",
     label: "What's Next",
-    body: "The next chapter of Splash is focused on turning the idea into a working product. Our initial direction centres on the foundations of cloud file storage, with a focus on file management, accessibility and a straightforward user experience. As development progresses, we'll share more about the platform, its capabilities and our plans for launch. We're not rushing to build everything at once. We're focused on getting the essentials right and creating a solid foundation for what Splash can become.",
+    body: "The next chapter of Splash is turning the idea into a working product. Our first milestone is a drive you can mount on your Mac and browse, with files streaming on demand rather than downloading in full. After that, we'll add writing files back to the cloud, then support for using Splash across multiple devices. Linux and Windows will follow once the Mac experience is solid. We're not rushing to build everything at once. We're focused on getting the essentials right and creating a solid foundation for what Splash can become.",
   },
 ];
