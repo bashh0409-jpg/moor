@@ -542,7 +542,7 @@ const Page = () => {
                         />
                         <div
                           aria-hidden="true"
-                          className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#00e]/50 via-neutral-900/20 to-black/30"
+                          className="pointer-events-none absolute inset-0  via-neutral-900/20 to-black/30"
                         />
                         <figcaption className="absolute bottom-3 left-3 font-mono text-[10px] text-white/70">
                           [ {item.id} ]
