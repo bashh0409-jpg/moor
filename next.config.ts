@@ -7,6 +7,19 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  async headers() {
+    const cacheHeaders = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
+
+    return [
+      { source: "/gallery/:path*", headers: cacheHeaders },
+      { source: "/komma.avif", headers: cacheHeaders },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {

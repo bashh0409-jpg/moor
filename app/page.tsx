@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import gsap from "gsap";
+import Image from "next/image";
 
 interface MenuItem {
   label: string;
@@ -362,7 +363,7 @@ const Page = () => {
       }
 
       figures.forEach((figure) => {
-        const image = figure.querySelector<HTMLElement>("div");
+        const image = figure.querySelector<HTMLElement>(".gallery-image");
         if (!image || reduceMotion) return;
 
         const enter = () =>
@@ -529,12 +530,19 @@ const Page = () => {
                         // mr-1 (not flex gap) so one set's width is exactly n * (tile + 4px)
                         className="relative mr-1 aspect-4/5 w-[60vw] shrink-0 overflow-hidden bg-neutral-900 [contain:paint] sm:w-[38vw] lg:w-[24vw]"
                       >
+                        <Image
+                          src={item.src}
+                          alt=""
+                          aria-hidden="true"
+                          fill
+                          sizes="(min-width: 1024px) 24vw, (min-width: 640px) 38vw, 60vw"
+                          loading="lazy"
+                          unoptimized={item.src.endsWith(".gif")}
+                          className="gallery-image object-cover will-change-transform"
+                        />
                         <div
                           aria-hidden="true"
-                          className="absolute inset-0 bg-linear-to-br from-[#00e]/50 via-neutral-900 to-black bg-cover bg-center will-change-transform"
-                          style={{
-                            backgroundImage: `url(${item.src})`,
-                          }}
+                          className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#00e]/50 via-neutral-900/20 to-black/30"
                         />
                         <figcaption className="absolute bottom-3 left-3 font-mono text-[10px] text-white/70">
                           [ {item.id} ]
