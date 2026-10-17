@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import gsap from "gsap";
 import Image from "next/image";
+import { ABOUT_SECTIONS } from "@/lib/about-sections";
+import { useScrollSound } from "@/hooks/use-scroll-sound";
+import type { ScrollSoundPreset } from "@/hooks/use-scroll-sound";
 
 interface MenuItem {
   label: string;
   href: string;
-}
-
-interface AboutSection {
-  index: string;
-  label: string;
-  body: string;
 }
 
 interface GalleryItem {
@@ -53,10 +50,21 @@ const GALLERY_IMAGES = [
   "/gallery/cosmos_572350572.webp",
   "/gallery/cosmos_653052878.webp",
   "/gallery/cosmos_684854038.webp",
+  "/gallery/cosmos_684854038.webp",
 ];
 
 // The page is rendered this many times and scroll position is wrapped back into the middle copy
 const COPIES = 3;
+
+// Slightly longer than the panel's 0.4s open tween so audio starts once the container is fully open
+const READ_START_DELAY_MS = 450;
+
+// "click" | "air" | "tick": see hooks/use-scroll-sound.ts
+const SCROLL_SOUND_PRESET: ScrollSoundPreset = "click";
+
+// Near-empty WAV used only to unlock an <audio> element inside the click gesture (see handleReadAloud)
+const SILENT_WAV =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
 const MENU_ITEMS: MenuItem[] = [
   { label: "Instagram", href: "#" },
@@ -91,45 +99,6 @@ const ROWS: GalleryRow[] = [
 
 const INTRO =
   "Moor Cloud is one calm place for everything you save, write and share, a searchable workspace that gets out of the way so you can think.";
-
-// Copy lives in data so you can swap it once the real product positioning is settled
-const ABOUT_SECTIONS: AboutSection[] = [
-  {
-    index: "01",
-    label: "Problem",
-    body: "Our digital lives are scattered across cloud drives, chat threads, note apps, email attachments and a dozen browser tabs. Every tool wants to be the home for something, so finding one file or one half-remembered idea means checking five places and still coming up empty. People lose hours every week to searching, re-uploading and re-explaining. The cost isn't only time: constant context switching breaks focus, work gets duplicated, good ideas get buried, and a quiet fatigue sets in that no single app has managed to fix.",
-  },
-  {
-    index: "02",
-    label: "Solution",
-    body: "Moor Cloud brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
-  },
-  {
-    index: "03",
-    label: "Features",
-    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Moor Cloud and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
-  },
-  {
-    index: "04",
-    label: "Principles",
-    body: "Fast before fancy: every interaction should feel immediate, and a feature that slows the product down doesn't ship. Quiet by default: no feeds, no streaks, no badges and no notifications competing for your attention. Private by design: your data stays yours, encrypted in transit and at rest, never sold to advertisers, and always exportable in open formats so you are never locked in. Simple enough that nobody needs a tutorial to get started.",
-  },
-  {
-    index: "05",
-    label: "Platforms",
-    body: "Moor Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
-  },
-  {
-    index: "06",
-    label: "Services",
-    body: "Moor Labs designs and builds Moor Cloud end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
-  },
-  {
-    index: "07",
-    label: "Roadmap",
-    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Moor Cloud can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
-  },
-];
 
 interface CollapsiblePanel {
   rootRef: RefObject<HTMLElement | null>;
@@ -226,8 +195,17 @@ const mod = (n: number, m: number): number => ((n % m) + m) % m;
 const Page = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
+  const [soundOn, setSoundOn] = useState<boolean>(false);
+  const [reading, setReading] = useState<boolean>(false);
   const introRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  // Smoothed, unbounded scroll distance written every frame by the scroll ticker and read by the
+  // audio ticker; a ref avoids re-renders
+  const scrollDistanceRef = useRef<number>(0);
+  const readTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const readAudioRef = useRef<HTMLAudioElement | null>(null);
+  // Incremented on every start/stop so a cancelled run's late audio events can't affect a newer run
+  const readRunRef = useRef<number>(0);
 
   const { rootRef: navRef, panelRef: menuPanelRef } = useCollapsiblePanel(
     menuOpen,
@@ -240,6 +218,79 @@ const Page = () => {
     ".about-item",
     introRef,
   );
+
+  useScrollSound(soundOn, scrollDistanceRef, SCROLL_SOUND_PRESET);
+
+  const stopReading = useCallback((): void => {
+    readRunRef.current += 1;
+    if (readTimerRef.current) clearTimeout(readTimerRef.current);
+    readTimerRef.current = null;
+
+    const audio = readAudioRef.current;
+    if (audio) {
+      // Detach handlers before clearing src: emptying src fires an `error` event in some browsers
+      audio.onended = null;
+      audio.onerror = null;
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+    }
+    readAudioRef.current = null;
+    setReading(false);
+  }, []);
+
+  // Plays section `i`, then chains to the next on `ended`. The run id guards against stale callbacks.
+  const playSection = useCallback(
+    (audio: HTMLAudioElement, i: number, run: number): void => {
+      if (readRunRef.current !== run) return;
+      if (i >= ABOUT_SECTIONS.length) {
+        stopReading();
+        return;
+      }
+
+      audio.onended = () => playSection(audio, i + 1, run);
+      audio.onerror = () => {
+        if (readRunRef.current === run) stopReading();
+      };
+      audio.src = `/audio/section-${i}.mp3`;
+      audio.play().catch((error: unknown) => {
+        console.error("Read aloud playback failed", error);
+        if (readRunRef.current === run) stopReading();
+      });
+    },
+    [stopReading],
+  );
+
+  const handleReadAloud = (): void => {
+    if (reading) {
+      stopReading();
+      return;
+    }
+
+    // Open the container first, then play once the animation has finished
+    setMenuOpen(false);
+    setAboutOpen(true);
+    setReading(true);
+
+    // Playing a silent clip synchronously inside the click marks this element as user-approved,
+    // so the delayed play() below isn't blocked by Safari/iOS autoplay rules
+    const audio = new Audio(SILENT_WAV);
+    void audio.play().catch(() => undefined); // best-effort unlock; real errors surface in playSection
+    readAudioRef.current = audio;
+
+    const run = ++readRunRef.current;
+    readTimerRef.current = setTimeout(() => {
+      playSection(audio, 0, run);
+    }, READ_START_DELAY_MS);
+  };
+
+  // Closing the panel (button or Escape) should also silence the reader
+  useEffect(() => {
+    if (!aboutOpen) stopReading();
+  }, [aboutOpen, stopReading]);
+
+  // Audio keeps playing after unmount/navigation unless stopped explicitly
+  useEffect(() => stopReading, [stopReading]);
 
   // Endless scroll: vertical position wraps, horizontal row offset follows an unbounded counter
   useEffect(() => {
@@ -297,6 +348,11 @@ const Page = () => {
     const tick = (): void => {
       current += (target - current) * 0.12; // lerp for a gliding feel
       if (Math.abs(target - current) < 0.05) current = target;
+
+      // Unbounded and wrap-safe (it never jumps when the scroll position wraps), and it follows the
+      // eased motion, so the sound lines up with what's on screen rather than the raw scroll event
+      scrollDistanceRef.current = current;
+
       if (current === applied) return;
       applied = current;
 
@@ -307,7 +363,6 @@ const Page = () => {
           track.setX(track.goesLeft ? -shift : shift - track.setWidth);
         });
       }
-
     };
 
     // Only width changes alter the cycle (tiles are sized in vw), so mobile toolbar resizes don't fire this
@@ -368,7 +423,7 @@ const Page = () => {
 
         const enter = () =>
           gsap.to(image, {
-            scale: 1.045,
+            scale: 1,
             duration: 0.65,
             ease: "power2.out",
             overwrite: "auto",
@@ -412,7 +467,7 @@ const Page = () => {
         {/* Navbar header */}
         <div className="flex items-center justify-between gap-3 px-4 py-2">
           <img
-            src="komma.avif"
+            src="/komma.avif"
             alt="Komma"
             className="h-auto w-30 object-contain"
           />
@@ -420,9 +475,13 @@ const Page = () => {
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
-              className="rounded-full bg-[#00e] px-4 py-2 font-mono text-xs text-white"
+              onClick={() => setSoundOn((prev) => !prev)}
+              aria-pressed={soundOn}
+              className={`rounded-full cursor-pointer px-4 py-2 font-mono text-xs text-white transition-colors ${
+                soundOn ? "bg-[#00e]" : "bg-black/50 hover:bg-[#00e]"
+              }`}
             >
-              [ Connect ]
+              [ Sound: {soundOn ? "On" : "Off"} ]
             </button>
 
             <button
@@ -504,7 +563,7 @@ const Page = () => {
       <div className="pointer-events-none w-full h-full bg-black/40  fixed inset-0 z-40 flex items-center justify-center">
         <div className="absolute h-40 w-64 rounded-full " />
         <img
-          src="komma.avif"
+          src="/komma.avif"
           alt="Komma"
           className="relative mix-blend-difference h-auto w-50 object-contain drop-shadow-2xl"
         />
@@ -563,7 +622,11 @@ const Page = () => {
         className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-black/30 text-white shadow-lg backdrop-blur-md"
       >
         <div className="flex w-full items-center justify-between rounded-full p-4 py-4 px-6 font-mono">
-          <img src="komma.avif" alt="" className="h-auto w-25 object-contain" />
+          <img
+            src="/komma.avif"
+            alt=""
+            className="h-auto w-25 object-contain"
+          />
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
@@ -581,37 +644,39 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Dark container: capped height, flex column so the button row never scrolls away */}
-        <div className="flex max-h-[60vh] flex-col overflow-hidden rounded-[2rem] py-4 bg-black/50">
-          {/* Only this region scrolls */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pt-2 [scrollbar-width:thin]">
-            {/* Intro: visible while collapsed, animates away when About opens */}
+        {/* Dark container */}
+        <div className="flex max-h-[60dvh] flex-col rounded-[2rem] pt-1 overflow-hidden bg-black/50 sm:rounded-[2rem]">
+          {/* Scrollable content */}
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-1 sm:px-6">
+            {/* Intro */}
             <div
               ref={introRef}
               aria-hidden={aboutOpen}
               className="overflow-hidden"
             >
-              <p className="mb-2  text-sm hidden md:inline-flex font-medium leading-4  tracking-tight text-white">
+              <p className="mb-2 hidden text-sm font-medium leading-5 tracking-tight text-white md:inline-flex">
                 {INTRO}
               </p>
             </div>
 
+            {/* About panel */}
             <div
               ref={aboutPanelRef}
               id="about-panel"
               aria-hidden={!aboutOpen}
               className="h-0 overflow-hidden"
             >
-              <div className="mb-2 flex flex-col gap-5 py-2">
+              <div className="mb-3 flex flex-col gap-5 py-3">
                 {ABOUT_SECTIONS.map((section) => (
                   <div
                     key={section.index}
                     className="about-item grid grid-cols-1 gap-2 text-[10px] tracking-tight md:grid-cols-4 md:gap-4"
                   >
-                    <p className="font-mono font-medium uppercase">
+                    <p className="font-mono font-medium uppercase leading-4 text-white/70">
                       {section.index} [ {section.label} ]
                     </p>
-                    <p className="text-xs leading-4 font-medium tracking-tight text-white md:col-span-3">
+
+                    <p className="text-xs font-medium leading-5 tracking-tight text-white md:col-span-3">
                       {section.body}
                     </p>
                   </div>
@@ -620,22 +685,23 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Always visible: sits outside the scroll region and the collapsing panel */}
-          <div className=" w-full shrink-0 items-center justify-between gap-2 px-6 pb-2 pt-2">
-            
-            <div className="flex shrink-0 w-full justify-between items-center gap-2">
-              
-              <a
-                href="mailto:info@thewisestudio.xyz"
-                aria-controls="about-panel"
-                className="cursor-pointer rounded-full  items-center flex justify-center bg-white/10 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+          {/* Fixed action bar */}
+          <div className="flex w-full shrink-0 items-center px-3 pb-3 pt-2 sm:px-6 sm:pb-4">
+            <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={handleReadAloud}
+                aria-pressed={reading}
+                className={`flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full px-3 py-3 font-mono text-[11px] leading-none text-white transition-colors duration-200 sm:px-5 sm:text-xs ${
+                  reading ? "bg-[#00e]" : "bg-white/10 hover:bg-white/20"
+                }`}
               >
-                [ Sponsor ]
-              </a>
+                {reading ? "Stop Reading" : "Read Aloud"}
+              </button>
+
               <a
                 href="mailto:info@thewisestudio.xyz"
-                aria-controls="about-panel"
-                className="cursor-pointer rounded-full min-w-40 items-center flex justify-center bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+                className="flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-[#00e] px-3 py-3 font-mono text-[11px] leading-none text-white transition-colors duration-200 hover:bg-[#2222ff] sm:px-5 sm:text-xs"
               >
                 [ Question? ]
               </a>
@@ -648,3 +714,14 @@ const Page = () => {
 };
 
 export default Page;
+
+/*
+ * Design note
+ * - Scroll sound lives in hooks/use-scroll-sound.ts so you can iterate on it without touching this file.
+ *   It reads the lerped scroll distance (not raw scrollY), so it never spikes on the endless-scroll wrap
+ *   and stays in sync with the row motion on screen.
+ * - Read Aloud plays pre-generated MP3s from /public/audio, chained on `ended`. Static files mean
+ *   no runtime API, key or cost, and identical audio everywhere. One file per section lets Stop cut in between.
+ * - After editing ABOUT_SECTIONS, delete the matching section-N.mp3 and re-run scripts/generate-audio.ts,
+ *   otherwise the audio will still speak the old text.
+ */
