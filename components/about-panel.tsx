@@ -13,7 +13,7 @@ interface AboutPanelProps {
 }
 
 const INTRO =
-  "Splash Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most.";
+  "Splash puts cloud file storage first, combining a simple, web-first experience with a vision for seamless access across devices. No unnecessary complexity—just a more straightforward way to store, access and manage your files.";
 
 export default function AboutPanel({
   aboutRef,

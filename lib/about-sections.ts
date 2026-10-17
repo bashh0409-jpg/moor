@@ -4,41 +4,41 @@ export interface AboutSection {
   body: string;
 }
 
-// Shared by the page (rendering) and /api/tts (synthesis) so the spoken text can never drift from what's on screen
+// Shared by the page and /api/tts so the spoken text always matches the UI.
 export const ABOUT_SECTIONS: AboutSection[] = [
   {
     index: "01",
     label: "Problem",
-    body: "Our digital lives are scattered across cloud drives, chat threads, note apps, email attachments and a dozen browser tabs. Every tool wants to be the home for something, so finding one file or one half-remembered idea means checking five places and still coming up empty. People lose hours every week to searching, re-uploading and re-explaining. The cost isn't only time: constant context switching breaks focus, work gets duplicated, good ideas get buried, and a quiet fatigue sets in that no single app has managed to fix.",
+    body: "Our digital lives are built around files, yet managing them across devices, folders and storage services can quickly become complicated. As our libraries grow, finding space for large files and keeping everything accessible becomes increasingly difficult. Local storage has its limits, while traditional cloud storage can feel like little more than another place to put things. We believe managing digital files should feel simpler, more flexible and less dependent on the limitations of a single device.",
   },
   {
     index: "02",
-    label: "Solution",
-    body: "Splash Cloud brings everything into one calm place. What you save, write and share lives in a single searchable workspace that opens instantly on any device, with no folders to maintain and nothing to organise by hand. A minimal interface, fast search and quiet automation keep the software out of the way, so it feels less like another tool to manage and more like room to think. You stop hunting for things and start building on top of them.",
+    label: "The Idea",
+    body: "Splash is an upcoming cloud storage platform built around a simple idea: your files should have a place of their own, accessible beyond the limits of your local device. Inspired by a new generation of storage solutions, Splash aims to make storing, accessing and managing digital files feel natural. We're exploring a more straightforward approach to cloud storage, bringing the essentials together in one focused experience without unnecessary complexity.",
   },
   {
     index: "03",
-    label: "Features",
-    body: "Instant universal search reaches across files, notes, links and conversations, with results that appear as you type. Drop anything into Splash Cloud and it is tagged and filed automatically, so organising is never your job. Shared spaces let teams, classmates and friends collaborate in one place with simple, clear permissions. Offline access keeps your library available on a train or a plane and syncs the moment you reconnect, without conflicts or duplicates.",
+    label: "The Experience",
+    body: "We're building Splash with simplicity at its core. The goal is to create a clean, intuitive space where files can be stored, browsed and managed without friction. From everyday documents to larger digital assets, the experience is being designed to keep file management straightforward and organised. Rather than overwhelming users with unnecessary tools, Splash will focus on the essential interactions that make cloud storage useful, accessible and easy to understand.",
   },
   {
     index: "04",
-    label: "Principles",
-    body: "Fast before fancy: every interaction should feel immediate, and a feature that slows the product down doesn't ship. Quiet by default: no feeds, no streaks, no badges and no notifications competing for your attention. Private by design: your data stays yours, encrypted in transit and at rest, never sold to advertisers, and always exportable in open formats so you are never locked in. Simple enough that nobody needs a tutorial to get started.",
+    label: "The Vision",
+    body: "We imagine a future where your digital files are no longer tied so closely to the physical devices you own. Splash aims to make cloud storage feel like a natural extension of your everyday computing experience, giving your files a more flexible home as your digital world grows. Our vision is to create a dependable, accessible storage experience that puts your files first and makes managing them feel less like a technical task and more like second nature.",
   },
   {
     index: "05",
-    label: "Platforms",
-    body: "Splash Cloud is built web-first so it works on any laptop, tablet or phone with nothing to install, then extended with native desktop and mobile apps for the moments when speed and system integration matter most. Quick capture comes through share sheets and browser extensions, so saving something takes a single tap. One account and one library mean the experience is identical on every screen, and what you started on your phone is already waiting on your desktop.",
+    label: "Principles",
+    body: "Splash is being shaped by a few simple principles. Simplicity means making storage easy to understand and use. Accessibility means rethinking how people reach their files beyond a single device. Reliability means treating the safekeeping of digital assets as a fundamental responsibility. Privacy means designing with appropriate protection and user control in mind. These principles guide our decisions as we work towards a product that feels considered, practical and built around the needs of the people who use it.",
   },
   {
     index: "06",
-    label: "Services",
-    body: "Splash Labs designs and builds Splash Cloud end to end: product strategy, interface and interaction design, brand identity, web and mobile engineering, and motion design. Because the same small team owns every layer, the visual language, the animation and the code all grow together. The result is a product that feels like one coherent thing from the first tap, rather than a collection of screens stitched together late in the project.",
+    label: "In Development",
+    body: "Splash is currently in preparation. We're working on the foundations of the product, exploring the right infrastructure and shaping an experience that brings our vision of cloud storage to life. This stage is about getting the fundamentals right before opening the platform to users. We're taking the time to build thoughtfully, prioritising the core storage experience and making deliberate decisions about what belongs in the product and what doesn't. There's still work ahead, and this is only the beginning.",
   },
   {
     index: "07",
-    label: "Roadmap",
-    body: "Phase one is the foundation: accounts, secure storage and fast search, released to a small group of early users for feedback. Phase two adds shared spaces, comments and collaboration tools. Phase three brings native desktop and mobile apps, an offline mode and a public API so Splash Cloud can connect to the tools people already use. Each phase ships only when it is solid, and early users help decide what comes next.",
+    label: "What's Next",
+    body: "The next chapter of Splash is focused on turning the idea into a working product. Our initial direction centres on the foundations of cloud file storage, with a focus on file management, accessibility and a straightforward user experience. As development progresses, we'll share more about the platform, its capabilities and our plans for launch. We're not rushing to build everything at once. We're focused on getting the essentials right and creating a solid foundation for what Splash can become.",
   },
 ];
