@@ -552,7 +552,17 @@ const Page = () => {
       >
         <div className="flex w-full items-center justify-between rounded-full p-4 py-6 px-6 font-mono">
           <img src="komma.avif" alt="" className="h-auto w-25 object-contain" />
-
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setAboutOpen((prev) => !prev)}
+              aria-expanded={aboutOpen}
+              aria-controls="about-panel"
+              className="cursor-pointer rounded-full min-w-40  bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+            >
+              [ {aboutOpen ? "Close" : "More Info"} ]
+            </button>
+          </div>
         </div>
 
         {/* Dark container: capped height, flex column so the button row never scrolls away */}
@@ -596,17 +606,14 @@ const Page = () => {
 
           {/* Always visible: sits outside the scroll region and the collapsing panel */}
           <div className=" w-full shrink-0 items-center justify-between gap-2 px-6 pb-2 pt-2">
-            <div className="flex shrink-0 items-center gap-2">
-              
-              <button
-                type="button"
-                onClick={() => setAboutOpen((prev) => !prev)}
-                aria-expanded={aboutOpen}
+            <div className="flex shrink-0 w-full justify-end items-center gap-2">
+              <a
+                href="mailto:info@thewisestudio.xyz"
                 aria-controls="about-panel"
-                className="cursor-pointer rounded-full  bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
+                className="cursor-pointer rounded-full min-w-40 items-center flex justify-center bg-[#00e] px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-[#00e]"
               >
-                [ {aboutOpen ? "Close" : "More Info"} ]
-              </button>
+                [ Question? ]
+              </a>
             </div>
           </div>
         </div>
