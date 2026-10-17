@@ -26,31 +26,43 @@ interface GalleryRow {
   items: GalleryItem[];
 }
 
-const GALLERY_IMAGES = [
+const GALLERY_ASSETS = [
   "/gallery/1-01.webp",
   "/gallery/cosmos_1046876467.webp",
+  "/gallery/cosmos_1051136214.webp",
   "/gallery/cosmos_114748657.webp",
   "/gallery/cosmos_1314984379.webp",
   "/gallery/cosmos_1315113271.gif",
+  "/gallery/cosmos_1362023669.webp",
+  "/gallery/cosmos_1461960497.mp4",
   "/gallery/cosmos_1462818484.webp",
   "/gallery/cosmos_1501491551.webp",
-  "/gallery/cosmos_1854803108.webp",
-  "/gallery/cosmos_1888286139.webp",
+  "/gallery/cosmos_1563076197.mp4",
   "/gallery/cosmos_1608306540.webp",
+  "/gallery/cosmos_1609525463.webp",
   "/gallery/cosmos_1688312940.webp",
   "/gallery/cosmos_1800600229.webp",
+  "/gallery/cosmos_1854803108.webp",
+  "/gallery/cosmos_1888286139.webp",
   "/gallery/cosmos_1896706248.webp",
+  "/gallery/cosmos_1915980613.webp",
   "/gallery/cosmos_1926019146.webp",
   "/gallery/cosmos_2012909807.webp",
   "/gallery/cosmos_2036487314.webp",
+  "/gallery/cosmos_206300164.webp",
   "/gallery/cosmos_227009253.webp",
   "/gallery/cosmos_398388872.webp",
   "/gallery/cosmos_413762843.webp",
+  "/gallery/cosmos_423875682.mp4",
   "/gallery/cosmos_486115365.webp",
   "/gallery/cosmos_572350572.webp",
+  "/gallery/cosmos_613355346.webp",
+  "/gallery/cosmos_632303741.webp",
   "/gallery/cosmos_653052878.webp",
   "/gallery/cosmos_684854038.webp",
-  "/gallery/cosmos_684854038.webp",
+  "/gallery/cosmos_813296592.webp",
+  "/gallery/cosmos_865140119.mp4",
+  "/gallery/cosmos_993114485.webp",
 ];
 
 // The page is rendered this many times and scroll position is wrapped back into the middle copy
@@ -84,17 +96,17 @@ const makeRow = (
   speed,
   items: Array.from({ length: count }, (_, i) => ({
     id: `${rowNumber}-${String(i + 1).padStart(2, "0")}`,
-    src: GALLERY_IMAGES[((rowNumber - 1) * count + i) % GALLERY_IMAGES.length],
+    src: GALLERY_ASSETS[((rowNumber - 1) * count + i) % GALLERY_ASSETS.length],
   })),
 });
 
 // Five rows so one cycle is taller than any viewport, which the wrap logic relies on
 const ROWS: GalleryRow[] = [
-  makeRow(1, "left", 0.5, 6),
-  makeRow(2, "right", 0.8, 6),
-  makeRow(3, "left", 0.65, 6),
-  makeRow(4, "right", 0.9, 6),
-  makeRow(5, "left", 0.55, 6),
+  makeRow(1, "left", 0.5, 7),
+  makeRow(2, "right", 0.8, 7),
+  makeRow(3, "left", 0.65, 7),
+  makeRow(4, "right", 0.9, 7),
+  makeRow(5, "left", 0.55, 8),
 ];
 
 const INTRO =
@@ -329,11 +341,14 @@ const Page = () => {
     // `target` counts every pixel the user has scrolled, never reset, so row motion survives the wrap
     let target = 0;
     let current = 0;
-    let applied = Number.NaN;
+    let autoPosition = 0;
+    let scrollBoost = 0;
 
     const onScroll = (): void => {
       const y = window.scrollY;
-      target += y - lastY;
+      const scrollDelta = y - lastY;
+      target += scrollDelta;
+      scrollBoost = Math.min(scrollBoost + Math.abs(scrollDelta) * 0.025, 12);
       lastY = y;
 
       // The copies are identical, so reposition instantly. `instant` prevents global
@@ -345,7 +360,7 @@ const Page = () => {
       }
     };
 
-    const tick = (): void => {
+    const tick = (_time: number, deltaTime: number): void => {
       current += (target - current) * 0.12; // lerp for a gliding feel
       if (Math.abs(target - current) < 0.05) current = target;
 
@@ -353,16 +368,17 @@ const Page = () => {
       // eased motion, so the sound lines up with what's on screen rather than the raw scroll event
       scrollDistanceRef.current = current;
 
-      if (current === applied) return;
-      applied = current;
-
+      const elapsedFrames = Math.min(deltaTime, 50) / (1000 / 60);
+      autoPosition += (0.18 + scrollBoost) * elapsedFrames;
+      scrollBoost *= Math.exp(-Math.min(deltaTime, 50) / 800);
       if (!reduceMotion) {
         tracks.forEach((track) => {
-          const shift = mod(current * track.speed, track.setWidth);
+          const shift = mod(autoPosition * track.speed, track.setWidth);
           // Both directions stay inside [-setWidth, 0], so the duplicate set always fills the gap
           track.setX(track.goesLeft ? -shift : shift - track.setWidth);
         });
       }
+
     };
 
     // Only width changes alter the cycle (tiles are sized in vw), so mobile toolbar resizes don't fire this
@@ -398,6 +414,33 @@ const Page = () => {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const videos = root.querySelectorAll<HTMLVideoElement>(".gallery-video");
+    const videoObserver =
+      !reduceMotion && "IntersectionObserver" in window
+        ? new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                const video = entry.target as HTMLVideoElement;
+                if (entry.isIntersecting) {
+                  video.play().catch((error: unknown) => {
+                    if (
+                      error instanceof DOMException &&
+                      error.name === "AbortError"
+                    ) {
+                      return;
+                    }
+                    console.error("Gallery video playback failed:", error);
+                  });
+                } else {
+                  video.pause();
+                }
+              });
+            },
+            { rootMargin: "100% 0px" },
+          )
+        : null;
+    videos.forEach((video) => videoObserver?.observe(video));
+
     const ctx = gsap.context(() => {
       const tracks = gsap.utils.toArray<HTMLElement>(".gallery-track");
       const figures = gsap.utils.toArray<HTMLElement>("figure");
@@ -454,6 +497,8 @@ const Page = () => {
           figure as HTMLElement & { __galleryCleanup?: () => void }
         ).__galleryCleanup?.();
       });
+      videoObserver?.disconnect();
+      videos.forEach((video) => video.pause());
       ctx.revert();
     };
   }, []);
@@ -465,7 +510,7 @@ const Page = () => {
         className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-3xl bg-black/30 text-white shadow-lg backdrop-blur-md"
       >
         {/* Navbar header */}
-        <div className="flex items-center justify-between gap-3 px-4 py-2">
+        <div className="flex items-center justify-between gap-3 px-2 py-2">
           <img
             src="/komma.avif"
             alt="Komma"
@@ -589,16 +634,28 @@ const Page = () => {
                         // mr-1 (not flex gap) so one set's width is exactly n * (tile + 4px)
                         className="relative mr-1 aspect-4/5 w-[60vw] shrink-0 overflow-hidden bg-neutral-900 [contain:paint] sm:w-[38vw] lg:w-[24vw]"
                       >
-                        <Image
-                          src={item.src}
-                          alt=""
-                          aria-hidden="true"
-                          fill
-                          sizes="(min-width: 1024px) 24vw, (min-width: 640px) 38vw, 60vw"
-                          loading="lazy"
-                          unoptimized={item.src.endsWith(".gif")}
-                          className="gallery-image object-cover will-change-transform"
-                        />
+                        {item.src.endsWith(".mp4") ? (
+                          <video
+                            src={item.src}
+                            aria-hidden="true"
+                            muted
+                            loop
+                            playsInline
+                            preload="none"
+                            className="gallery-image gallery-video absolute inset-0 h-full w-full object-cover will-change-transform"
+                          />
+                        ) : (
+                          <Image
+                            src={item.src}
+                            alt=""
+                            aria-hidden="true"
+                            fill
+                            sizes="(min-width: 1024px) 24vw, (min-width: 640px) 38vw, 60vw"
+                            loading="lazy"
+                            unoptimized={item.src.endsWith(".gif")}
+                            className="gallery-image object-cover will-change-transform"
+                          />
+                        )}
                         <div
                           aria-hidden="true"
                           className="pointer-events-none absolute inset-0  via-neutral-900/20 to-black/30"
@@ -619,7 +676,7 @@ const Page = () => {
       {/* Bottom nav: pinned to bottom-4, so opening grows it upward */}
       <aside
         ref={aboutRef}
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-black/30 text-white shadow-lg backdrop-blur-md"
+        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-[2rem] bg-[#0006] text-white shadow-lg backdrop-blur-lg"
       >
         <div className="flex w-full items-center justify-between rounded-full p-4 py-4 px-6 font-mono">
           <img
@@ -645,7 +702,7 @@ const Page = () => {
         </div>
 
         {/* Dark container */}
-        <div className="flex max-h-[60dvh] flex-col rounded-[2rem] pt-1 overflow-hidden bg-black/50 sm:rounded-[2rem]">
+        <div className="flex max-h-[60dvh] flex-col rounded-[2rem] pt-1 overflow-hidden backdrop-blur-lg bg-[#0000004d] sm:rounded-[2rem]">
           {/* Scrollable content */}
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-1 sm:px-6">
             {/* Intro */}
