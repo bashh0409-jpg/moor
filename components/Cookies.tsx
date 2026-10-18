@@ -3,6 +3,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { useSyncExternalStore } from "react";
+import HoverLabel from "./hover-label";
 
 const consentStorageKey = "splash-cookie-consent";
 
@@ -59,30 +60,33 @@ const Cookies = () => {
       {isHydrated && choice === null ? (
         <aside
           aria-label="Cookie consent"
-          className="fixed inset-x-4 bottom-4 rounded-xl z-[60]  bg-white p-2 shadow-[0_18px_60px_rgb(0_0_0/18%)] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-sm"
+          className="fixed inset-x-4 bottom-4 rounded-3xl z-[60]  bg-white p-3 shadow-[0_18px_60px_rgb(0_0_0/18%)] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-sm"
         >
           <p className="text-sm mon leading-4 geist tracking-tight font-medium uppercas text-[#999]">
-            We use necessary <a href="legal/cookies" className="text-blue-600 underline">cookies</a> to keep the site working. With your
-            permission, we also use privacy-friendly analytics to improve it.
+            We use necessary{" "}
+            <a href="legal/#cookies" className="text-blue-600 underline">
+              cookies
+            </a>{" "}
+            to keep the site working. With your permission, we also use
+            privacy-friendly analytics to improve it.
           </p>
-          <div className="mt-4 flex flex-wrap justify-between items-center gap-2">
+          <div className="mt-2 flex flex-wrap justify-between items-center gap-2">
             <span className="gap-1 flex">
               <button
                 type="button"
                 onClick={() => saveChoice("accepted")}
-                className="w-fit  geist cursor-pointer  capitalize max-h-7 rounded-3xl border border-black/10 bg-black/[0.03] px-2 py-1 text-sm font-medium leading-4 tracking-tight text-[#333] [overflow-wrap:anywhere]"
+                className="w-fit  geist cursor-pointer items-center flex capitalize max-h-7 rounded-3xl border border-black/10 bg-black/[0.03] px-2 py-1 text-sm font-medium leading-4 tracking-tight text-[#333] [overflow-wrap:anywhere]"
               >
-                Accept
+                <HoverLabel>Accept</HoverLabel>
               </button>
               <button
                 type="button"
                 onClick={() => saveChoice("rejected")}
-                className="w-fit  geist  cursor-pointer capitalize max-h-7 rounded-3xl border border-black/10 bg-black/[0.03] px-2 py-1 text-sm font-medium leading-4 tracking-tight text-[#333] [overflow-wrap:anywhere]"
+                className="w-fit  geist flex items-center  cursor-pointer capitalize max-h-7 rounded-3xl border border-black/10 bg-black/[0.03] px-2 py-1 text-sm font-medium leading-4 tracking-tight text-[#333] [overflow-wrap:anywhere]"
               >
-                Decline
+                <HoverLabel> Decline</HoverLabel>
               </button>
             </span>
-           
           </div>
         </aside>
       ) : null}
