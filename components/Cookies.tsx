@@ -62,7 +62,7 @@ const Cookies = () => {
           className="fixed inset-x-4 bottom-4 rounded-xl z-[60]  bg-white p-2 shadow-[0_18px_60px_rgb(0_0_0/18%)] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-sm"
         >
           <p className="text-sm mon leading-4 geist tracking-tight font-medium uppercas text-[#999]">
-            We use necessary cookies to keep the site working. With your
+            We use necessary <a href="legal/cookies" className="text-blue-600 underline">cookies</a> to keep the site working. With your
             permission, we also use privacy-friendly analytics to improve it.
           </p>
           <div className="mt-4 flex flex-wrap justify-between items-center gap-2">

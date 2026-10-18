@@ -15,7 +15,7 @@ const sections = [
 export default function LegalPage() {
   return (
     <main className="min-h-screen bg-white px-5 py-6 text-black sm:px-8 sm:py-10">
-      <header className="mx-auto flex w-full max-w-xl items-center justify-between">
+      <header className="fixed left-1/2 top-6 z-50 flex w-[calc(100%-2.5rem)] max-w-xl -translate-x-1/2 items-center justify-between">
         <Link
           href="/"
           aria-label="Splash home"
@@ -24,17 +24,17 @@ export default function LegalPage() {
           <img
             src="/splash.svg"
             alt=""
-            className="h-auto mix-blend-difference w-18 object-contain"
+            className="h-auto w-18 object-contain brightness-0"
           />
         </Link>
 
-        <span className="text-[#999]  text-sm mb-2 font-medium tracking-tight ">
-          Last updated: October 18, 2026
+        <span className="text-right text-xs font-medium tracking-tight text-[#999] sm:text-sm">
+          Updated: October 18, 2026
         </span>
       </header>
 
       <article className="mx-auto w-full max-w-xl pb-20 pt-16 sm:pt-24">
-        <div className="mb-8 px-4">
+        <div className="mb-8 ">
           <h1 className="mt-3 text-3xl font-semibold tracking-tighter sm:text-4xl">
             Legal
           </h1>
@@ -63,7 +63,7 @@ export default function LegalPage() {
           ))}
         </nav>
 
-        <div className="space-y-8 px-4">
+        <div className="space-y-8 ">
           <section id="terms" className="scroll-mt-8">
             <h2 className="mb-2 text-sm font-medium tracking-tight text-[#999]">
               1. Terms of use
