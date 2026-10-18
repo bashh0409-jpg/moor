@@ -512,7 +512,7 @@ const Page = () => {
       />
 
       {/* Logo pinned to the middle of the screen; pointer-events-none so it never blocks scrolling or taps */}
-      <div className="pointer-events-none w-full h-full bg-black/40  fixed inset-0 z-40 flex items-center justify-center">
+      <div className="pointer-events-none w-full h-full bg-black/10  fixed inset-0 z-40 flex items-center justify-center">
         <div className="absolute h-40 w-64 rounded-full " />
         <img
           src="/splash.svg"

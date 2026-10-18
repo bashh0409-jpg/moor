@@ -1,4 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from "react";
+import Link from "next/link";
 import HoverLabel from "@/components/hover-label";
 
 interface MenuItem {
@@ -17,10 +18,10 @@ interface SiteNavbarProps {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: "Instagram", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "Twitter", href: "#" },
-  { label: "Speedrun", href: "#" },
+  { label: "Instagram", href: "https://www.instagram.com/bashh0409/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/wandile-langa-b63466441/" },
+  { label: "Twitter", href: "https://x.com/bashh0409" },
+  //{ label: "Speedrun", href: "#" },
 ];
 
 export default function SiteNavbar({
@@ -87,13 +88,11 @@ export default function SiteNavbar({
         <div className="flex items-center gap-2 px-4 pt-4">
           
 
-          <a
-            href="#"
-            download="Splash-Cloud.dmg"
-            tabIndex={menuOpen ? 0 : -1}
-            onClick={() => setMenuOpen(false)}
+          <span
+            
+        
             aria-label="Download Splash Cloud for Mac"
-            className="menu-item inline-flex cursor-disabled items-center gap-2 rounded-full bg-black uppercase font-mono font-medium px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
+            className="menu-item inline-flex cursor-not-allowed items-center gap-2 rounded-full bg-black uppercase font-mono font-medium px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
           >
             <svg
               aria-hidden="true"
@@ -103,13 +102,13 @@ export default function SiteNavbar({
             >
               <path d="M16.5 4.1c.6-.73 1.01-1.75.9-2.76-.88.04-1.95.59-2.58 1.31-.56.64-1.05 1.68-.92 2.68.98.08 1.99-.5 2.6-1.23ZM20.58 14.09c-.03.07-.37 1.27-1.22 2.5-.72 1.07-1.48 2.13-2.68 2.15-1.17.02-1.55-.69-2.89-.69-1.33 0-1.75.67-2.85.71-1.14.05-2.01-1.14-2.74-2.2-1.49-2.16-2.63-6.1-1.1-8.76.76-1.32 2.12-2.16 3.59-2.18 1.12-.02 2.18.76 2.86.76.69 0 1.99-.94 3.35-.8.57.02 2.17.22 3.2 1.72-.08.05-1.91 1.1-1.88 3.3.02 2.69 2.33 3.58 2.36 3.59Z" />
             </svg>
-            <HoverLabel>cooming soon</HoverLabel>
-          </a>
+            <HoverLabel>coming soon</HoverLabel>
+          </span>
           <a
-            href="#contact"
+            href="mailto:bashh0409@gmail.com"
             tabIndex={menuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
-            className="menu-item rounded-full bg-black/50 px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
+            className="menu-item rounded-full bg-black uppercase px-3 py-2 font-mono text-xs text-white/80 transition-colors hover:bg-white/10"
           >
             <HoverLabel>[ Contact ]</HoverLabel>
           </a>
@@ -128,6 +127,16 @@ export default function SiteNavbar({
               </a>
             </li>
           ))}
+          <li className="menu-item">
+            <Link
+              href="/legal"
+              tabIndex={menuOpen ? 0 : -1}
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-full px-2 py-2 font-mono text-xs text-white/60 transition-colors hover:text-white"
+            >
+              <HoverLabel>[ Legal ]</HoverLabel>
+            </Link>
+          </li>
         </ul>
 
         <div className="flex flex-co gap-1 px-4 pb-4 pt-3 font-mono text-[10px] uppercase text-white">
