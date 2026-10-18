@@ -70,8 +70,8 @@ export default function SiteNavbar({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 -960 960 960"
               fill="currentColor"
-              className={`h-6 w-6 transition-transform duration-200 ${
-                menuOpen ? "rotate-45" : "hover:rotate-90"
+              className={`h-6 w-6 transition-transform duration-400 ${
+                menuOpen ? "rotate-45" : "hover:rotate-180"
               }`}
             >
               <path d="M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z" />
