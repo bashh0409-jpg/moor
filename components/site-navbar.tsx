@@ -39,6 +39,7 @@ export default function SiteNavbar({
       className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-3xl bg-black/30 text-white shadow-lg backdrop-blur-md"
     >
       <div className="flex items-center justify-between gap-3 px-2 py-2">
+        
         <img
           src="/splash.svg"
           alt="splash"
@@ -51,7 +52,7 @@ export default function SiteNavbar({
             onClick={() => setSoundOn((prev) => !prev)}
             aria-pressed={soundOn}
             className={`cursor-pointer rounded-full px-4 py-2 font-mono text-xs text-white transition-colors ${
-              soundOn ? "bg-[#00e]" : "bg-black/50 hover:bg-[#00e]"
+              soundOn ? "bg-[#00e]" : "bg-[#00e] hover:bg-[#00e]"
             }`}
           >
             <HoverLabel>[ Sound: {soundOn ? "On" : "Off"} ]</HoverLabel>
@@ -63,13 +64,13 @@ export default function SiteNavbar({
             aria-expanded={menuOpen}
             aria-controls="nav-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="cursor-pointer rounded-full bg-black/50 p-2 px-4"
+            className="cursor-pointer rounded-full hover:bg-black bg-black md:bg-black/50 p-1 px-4"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 -960 960 960"
               fill="currentColor"
-              className={`h-4 w-4 transition-transform duration-200 ${
+              className={`h-6 w-6 transition-transform duration-200 ${
                 menuOpen ? "rotate-45" : "hover:rotate-90"
               }`}
             >
